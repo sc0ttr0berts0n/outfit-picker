@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Outfit Picker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="app" class="container">
+  <h1>Outfit Picker</h1>
+  <section class="results">
+    <div class="torso category">
+      <span class="label">Torso</span> 
+      <span class="value">{{selected.torso}}</span>
+      
+    </div>
+    <div class="legs category">
+      <span class="label">Legs</span> 
+      <span class="value">{{selected.legs}}</span>
+    </div>
+  </section>
+  <section class="settings cap">
+    <div class="season-container">
+      <label for="season">Season</label>
+      <select name="season" id="" v-model="currentSeason" @change="onSeasonChange()">
+        <option 
+          v-for="season in seasons" 
+          :selected="season === currentSeason"
+          :value="season">
+          {{season}}
+        </option>
+      </select>
+    </div>
+    <div class="button" @click="getOutfit()">Roll</div>
+  </section>
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.21/vue.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

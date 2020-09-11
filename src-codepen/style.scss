@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:700');
+
+$primary-color: #0b103b;
+$secondary-color: #0DD793;
+
+body {
+  display: flex;
+  background-image: linear-gradient(#0dd793, #51F5E3);
+  color: $secondary-color;
+  font-family: 'Montserrat', sans-serif;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+h1 {
+  color: $primary-color;
+  font-size: 1.25rem;
+  text-align: center;
+  padding-bottom: 0.25rem;
+}
+
+.headline {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.container {
+  font-size: 1rem;
+  width: 80%;
+  max-width: 25rem;
+}
+
+section {
+  background-color: $primary-color;
+  border-radius: 4px;
+  padding: 1rem 1rem;
+  &.settings {
+    border: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom: 0.25rem solid darken($primary-color, 10%);
+  }
+  &.results {
+    color: $primary-color;
+    background-color: rgba($primary-color,0.2);
+    border: 1px solid $primary-color;
+    border-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.settings {
+  display: flex;
+}
+
+.results {
+  display: flex;
+  > div {
+    flex: 1 1 50%;
+    padding: 0 0.5rem;
+  }
+  .category {
+    display: flex;
+    flex-direction: column;
+  }
+  .label {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: rgba(white, 0.6);
+    margin-bottom: 0.125rem;
+  }
+}
+
+.season-container {
+  padding-left: 0.5rem;
+  label {
+    display: block;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: rgba(white, 0.6);
+  }
+}
+
+.button {
+  background-color: $secondary-color;
+  color: white;
+  border-radius: 0.25rem;
+  padding: 1rem;
+  text-transform: uppercase;
+  margin-left: 1rem;
+  flex: 1 0 auto;
+  text-align: center;
+  border-bottom: 4px solid darken($secondary-color, 20%);
+  &:hover {
+    cursor: pointer;
+    background-color: lighten($secondary-color, 5%);
+    border-bottom-width: 3px;
+    margin-top: 1px ;
+  }
+  &:active {
+    background-color: darken($secondary-color, 5%);
+    border-bottom-width: 0;
+    margin-top: 4px;
+  }
+}
+
+.anim-wiggle {
+  animation: wiggle 200ms;
+  animation-iteration-count: 3;
+}
+@keyframes wiggle {
+  0% {
+    transform: rotate(0); 
+  }
+  33% {
+    transform: rotate(-5deg); 
+  }
+  66% {
+    transform: rotate(5deg); 
+  }
+  100% {
+    transform: rotate(0); 
+  }
+}
