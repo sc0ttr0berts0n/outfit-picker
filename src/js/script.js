@@ -10,25 +10,11 @@ const app = new Vue({
         seasons: ['spring', 'summer', 'fall', 'winter'],
         clothing: [
             {
-                name: 'Maxi Dress',
-                region: 'torso',
-                category: 'dress',
-                seasons: ['spring', 'summer'],
-                icon: ['dress'],
-            },
-            {
                 name: 'Dress',
                 region: 'torso',
                 category: 'dress',
                 seasons: ['spring', 'summer', 'fall', 'winter'],
                 icon: ['dress'],
-            },
-            {
-                name: 'Maxi Skirt',
-                region: 'legs',
-                category: 'skirt',
-                seasons: ['spring', 'summer'],
-                icon: ['skirt'],
             },
             {
                 name: 'Short Skirt',
