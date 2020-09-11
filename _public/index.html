@@ -24,35 +24,32 @@
 <body>
 
     <div id="app" class="container">
-    <h1 class="headline">Outfit Picker</h1>
-    <section class="results">
-        <div class="torso category">
-        <span class="label">Torso</span>
-        <span class="value">{{selected.torso}}</span>
-
-        </div>
-        <div class="legs category">
-        <span class="label">Legs</span>
-        <span class="value">{{selected.legs}}</span>
-        </div>
-    </section>
-    <section class="settings cap">
-        <div class="season-container">
-        <label for="season">Season</label>
-        <select name="season" id="" v-model="currentSeason" @change="onSeasonChange()">
-            <option
-            v-for="season in seasons"
-            :selected="season === currentSeason"
-            :value="season">
-            {{season}}
-            </option>
-        </select>
-        </div>
-    </section>
-    <section class="button-wrapper">
-        <div class="button bottom" @click="getOutfit()">Roll</div>
-    </section>
+        <header>
+            <h1 class="headline">Ryan&rsquo;s Outfit Picker</h1>
+        </header>
+        <section class="results">
+            <div class="torso category">
+                <img class="clothing-icon" :class="selected.torso.icon" v-if="rollWasPressed" :src="`_img/clothing/${selected.torso.icon}.svg`" :alt="selected.icon">
+                <span class="label">Torso</span>
+                <span class="value">{{selected.torso.text}}</span>
+            </div>
+            <div class="legs category">
+                <img class="clothing-icon" :class="selected.legs.icon" v-if="rollWasPressed" :src="`_img/clothing/${selected.legs.icon}.svg`" :alt="selected.icon">
+                <span class="label">Legs</span>
+                <span class="value">{{selected.legs.text}}</span>
+            </div>
+        </section>
+        <section class="settings cap">
+            <span class="label">Season:</span>
+            <div class="season-container">
+                <div class="season" @click="changeSeason(season)"v-for="season in seasons" :class="{inactive: season !== currentSeason}">{{season}}</div>
+            </div>
+        </section>
+        <section class="button-wrapper bottom">
+            <div class="button" @click="getOutfit()">Roll</div>
+        </section>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="_js/app.js"></script>
 
