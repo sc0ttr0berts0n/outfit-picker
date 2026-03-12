@@ -10,6 +10,13 @@
       @change="changeSeason"
     />
     <RollButton @roll="handleRoll" />
+    <WeatherBar
+      :today="today"
+      :tomorrow="tomorrow"
+      :loading="weatherLoading"
+      :error="weatherError"
+      @refresh="refreshLocation"
+    />
   </div>
 </template>
 
@@ -18,10 +25,20 @@ import { ref } from 'vue'
 import OutfitResults from './components/OutfitResults.vue'
 import SeasonPicker from './components/SeasonPicker.vue'
 import RollButton from './components/RollButton.vue'
+import WeatherBar from './components/WeatherBar.vue'
 import { useOutfitPicker } from './composables/useOutfitPicker.js'
+import { useWeather } from './composables/useWeather.js'
 
 const { seasons, currentSeason, hasRolled, selected, roll, changeSeason } =
   useOutfitPicker()
+
+const {
+  today,
+  tomorrow,
+  loading: weatherLoading,
+  error: weatherError,
+  refreshLocation,
+} = useWeather()
 
 const wiggling = ref(false)
 
@@ -99,17 +116,18 @@ header {
   padding: 1rem;
   font-size: 1rem;
   height: 100%;
-  max-height: 450px;
+  max-height: 520px;
   width: 100%;
   max-width: 375px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto 1fr auto auto auto;
   grid-template-areas:
     'header header'
     'results results'
     'settings settings'
-    'button button';
+    'button button'
+    'weather weather';
 }
 
 section {
@@ -128,9 +146,7 @@ section {
   }
 
   &.bottom {
-    border-radius: 4px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    border-radius: 0;
   }
 
   &.results {
