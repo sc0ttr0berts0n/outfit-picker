@@ -1,7 +1,15 @@
 <template>
   <div class="container" :class="{ 'anim-wiggle': wiggling }">
     <header>
-      <h1 class="headline">Ryan&rsquo;s Outfit Picker</h1>
+      <div class="header-row">
+        <h1 class="headline">Ryan&rsquo;s Outfit Picker</h1>
+        <button class="gear-btn" @click="configOpen = true" title="Configure clothing">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
     </header>
     <OutfitResults :selected="selected" :hasRolled="hasRolled" />
     <SeasonPicker
@@ -18,19 +26,34 @@
       @refresh="refreshLocation"
     />
   </div>
+  <Transition name="fade">
+    <ClothingConfig
+      v-if="configOpen"
+      :clothing="clothing"
+      @close="configOpen = false"
+      @update="updateItem"
+      @add="addItem"
+      @remove="removeItem"
+      @reset="resetToDefaults"
+    />
+  </Transition>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import OutfitResults from './components/OutfitResults.vue'
 import SeasonPicker from './components/SeasonPicker.vue'
 import RollButton from './components/RollButton.vue'
 import WeatherBar from './components/WeatherBar.vue'
+import ClothingConfig from './components/ClothingConfig.vue'
+import { useClothing } from './composables/useClothing.js'
 import { useOutfitPicker } from './composables/useOutfitPicker.js'
 import { useWeather } from './composables/useWeather.js'
 
-const { seasons, currentSeason, hasRolled, selected, roll, changeSeason } =
-  useOutfitPicker()
+const { clothing, addItem, removeItem, updateItem, resetToDefaults } =
+  useClothing()
+
+const configOpen = ref(false)
 
 const {
   today,
@@ -39,6 +62,11 @@ const {
   error: weatherError,
   refreshLocation,
 } = useWeather()
+
+const todayHigh = computed(() => today.value?.high ?? null)
+
+const { seasons, currentSeason, hasRolled, selected, roll, changeSeason } =
+  useOutfitPicker({ clothing, tempHigh: todayHigh })
 
 const wiggling = ref(false)
 
@@ -101,7 +129,7 @@ h1 {
 .headline {
   font-size: 1.25rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
 }
 
 header {
@@ -110,6 +138,31 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.gear-btn {
+  background: none;
+  border: none;
+  color: $primary-color;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .container {
@@ -260,6 +313,16 @@ section {
   &.sweater {
     max-width: 90px;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 .anim-wiggle {

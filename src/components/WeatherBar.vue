@@ -6,12 +6,18 @@
       <div v-if="today" class="weather-day">
         <span class="weather-label">{{ today.dayLabel }}</span>
         <span class="weather-icon">{{ today.icon }}</span>
-        <span class="weather-temps">{{ today.high }}° / {{ today.low }}°</span>
+        <span class="weather-temps">
+          <span class="weather-high">{{ today.high }}°</span>
+          <span class="weather-low">{{ today.low }}°</span>
+        </span>
       </div>
       <div v-if="tomorrow" class="weather-day">
         <span class="weather-label">{{ tomorrow.dayLabel }}</span>
         <span class="weather-icon">{{ tomorrow.icon }}</span>
-        <span class="weather-temps">{{ tomorrow.high }}° / {{ tomorrow.low }}°</span>
+        <span class="weather-temps">
+          <span class="weather-high">{{ tomorrow.high }}°</span>
+          <span class="weather-low">{{ tomorrow.low }}°</span>
+        </span>
       </div>
     </template>
     <button class="weather-refresh" @click="$emit('refresh')" title="Refresh location">
@@ -72,8 +78,21 @@ $secondary-color: #0dd793;
 }
 
 .weather-temps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.weather-high {
   font-size: 0.7rem;
   color: rgba(white, 0.7);
+  letter-spacing: 0.5px;
+}
+
+.weather-low {
+  font-size: 0.6rem;
+  color: rgba(white, 0.4);
   letter-spacing: 0.5px;
 }
 
