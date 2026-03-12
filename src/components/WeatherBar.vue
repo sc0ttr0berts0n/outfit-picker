@@ -3,7 +3,12 @@
     <div v-if="loading" class="weather-loading">Loading weather...</div>
     <div v-else-if="error" class="weather-error">{{ error }}</div>
     <template v-else>
-      <div v-if="today" class="weather-day">
+      <div
+        v-if="today"
+        class="weather-day"
+        :class="{ active: selectedDay === 'today' }"
+        @click="$emit('select', 'today')"
+      >
         <span class="weather-label">{{ today.dayLabel }}</span>
         <span class="weather-icon">{{ today.icon }}</span>
         <span class="weather-temps">
@@ -11,7 +16,12 @@
           <span class="weather-low">{{ today.low }}°</span>
         </span>
       </div>
-      <div v-if="tomorrow" class="weather-day">
+      <div
+        v-if="tomorrow"
+        class="weather-day"
+        :class="{ active: selectedDay === 'tomorrow' }"
+        @click="$emit('select', 'tomorrow')"
+      >
         <span class="weather-label">{{ tomorrow.dayLabel }}</span>
         <span class="weather-icon">{{ tomorrow.icon }}</span>
         <span class="weather-temps">
@@ -35,9 +45,10 @@ defineProps({
   tomorrow: { type: Object, default: null },
   loading: { type: Boolean, default: false },
   error: { type: String, default: null },
+  selectedDay: { type: String, default: 'today' },
 })
 
-defineEmits(['refresh'])
+defineEmits(['refresh', 'select'])
 </script>
 
 <style lang="scss" scoped>
@@ -63,6 +74,20 @@ $secondary-color: #0dd793;
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: border-color 0.15s, background-color 0.15s;
+
+  &.active {
+    border-color: rgba($secondary-color, 0.4);
+    background-color: rgba($secondary-color, 0.1);
+  }
+
+  &:not(.active):hover {
+    border-color: rgba(white, 0.1);
+  }
 }
 
 .weather-label {

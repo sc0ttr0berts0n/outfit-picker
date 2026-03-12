@@ -23,7 +23,9 @@
       :tomorrow="tomorrow"
       :loading="weatherLoading"
       :error="weatherError"
+      :selectedDay="selectedDay"
       @refresh="refreshLocation"
+      @select="(day) => selectedDay = day"
     />
   </div>
   <Transition name="fade">
@@ -63,10 +65,15 @@ const {
   refreshLocation,
 } = useWeather()
 
-const todayHigh = computed(() => today.value?.high ?? null)
+const selectedDay = ref('today')
+
+const selectedHigh = computed(() => {
+  const day = selectedDay.value === 'tomorrow' ? tomorrow.value : today.value
+  return day?.high ?? null
+})
 
 const { seasons, currentSeason, hasRolled, selected, roll, changeSeason } =
-  useOutfitPicker({ clothing, tempHigh: todayHigh })
+  useOutfitPicker({ clothing, tempHigh: selectedHigh })
 
 const wiggling = ref(false)
 
