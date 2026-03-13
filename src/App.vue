@@ -1,4 +1,5 @@
 <template>
+  <FloatingIcons />
   <div class="container" :class="{ 'anim-wiggle': wiggling }">
     <header>
       <div class="header-row">
@@ -25,7 +26,7 @@
       :error="weatherError"
       :selectedDay="selectedDay"
       @refresh="refreshLocation"
-      @select="(day) => selectedDay = day"
+      @select="selectDay"
     />
   </div>
   <Transition name="fade">
@@ -48,6 +49,7 @@ import SeasonPicker from './components/SeasonPicker.vue'
 import RollButton from './components/RollButton.vue'
 import WeatherBar from './components/WeatherBar.vue'
 import ClothingConfig from './components/ClothingConfig.vue'
+import FloatingIcons from './components/FloatingIcons.vue'
 import { useClothing } from './composables/useClothing.js'
 import { useOutfitPicker } from './composables/useOutfitPicker.js'
 import { useWeather } from './composables/useWeather.js'
@@ -67,7 +69,13 @@ const {
 
 const selectedDay = ref('today')
 
+function selectDay(day) {
+  // Tap same day again to unset
+  selectedDay.value = selectedDay.value === day ? null : day
+}
+
 const selectedHigh = computed(() => {
+  if (selectedDay.value == null) return null
   const day = selectedDay.value === 'tomorrow' ? tomorrow.value : today.value
   return day?.high ?? null
 })
@@ -186,6 +194,8 @@ header {
 }
 
 .container {
+  position: relative;
+  z-index: 1;
   padding: 1rem;
   font-size: 1rem;
   height: 100dvh;

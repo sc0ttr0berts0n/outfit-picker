@@ -1,7 +1,7 @@
 <template>
   <section class="weather-bar">
     <div v-if="loading" class="weather-loading">Loading weather...</div>
-    <div v-else-if="error" class="weather-error">{{ error }}</div>
+    <div v-else-if="error && !today" class="weather-error">{{ error }}</div>
     <template v-else>
       <div
         v-if="today"
@@ -29,6 +29,16 @@
           <span class="weather-low">{{ tomorrow.low }}°</span>
         </span>
       </div>
+      <div
+        v-if="selectedDay == null"
+        class="weather-unset"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+        <span>No weather filter</span>
+      </div>
     </template>
     <button class="weather-refresh" @click="$emit('refresh')" title="Refresh location">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -45,7 +55,7 @@ defineProps({
   tomorrow: { type: Object, default: null },
   loading: { type: Boolean, default: false },
   error: { type: String, default: null },
-  selectedDay: { type: String, default: 'today' },
+  selectedDay: { default: 'today' },
 })
 
 defineEmits(['refresh', 'select'])
@@ -119,6 +129,16 @@ $secondary-color: #0dd793;
   font-size: 0.6rem;
   color: rgba(white, 0.4);
   letter-spacing: 0.5px;
+}
+
+.weather-unset {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(white, 0.3);
 }
 
 .weather-loading,
