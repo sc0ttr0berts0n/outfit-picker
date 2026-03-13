@@ -49,7 +49,9 @@ function mergeWithDefaults(stored) {
 
 export function useClothing() {
   const stored = loadFromStorage()
-  const initialItems = stored ? mergeWithDefaults(stored) : [...defaultClothing]
+  const initialItems = stored
+    ? mergeWithDefaults(stored)
+    : defaultClothing.map((item) => ({ ...item }))
 
   const clothing = ref(initialItems)
 

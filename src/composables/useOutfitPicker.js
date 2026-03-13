@@ -8,7 +8,7 @@ const SEASON_BOUNDARIES = [
   { month: 11, day: 21, season: 'winter' }, // ~Dec 21  — winter solstice
 ]
 
-function getSeasonFromDate(date) {
+export function getSeasonFromDate(date) {
   const m = date.getMonth()
   const d = date.getDate()
 
