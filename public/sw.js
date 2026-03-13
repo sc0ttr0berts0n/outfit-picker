@@ -5,7 +5,7 @@ const APP_SHELL = [
   '/',
   '/manifest.webmanifest',
   '/img/clothing/dress.svg',
-  '/img/clothing/logo.svg',
+  '/img/logo.svg',
   '/img/clothing/shirt.svg',
   '/img/clothing/skirt.svg',
   '/img/clothing/sweater.svg',
