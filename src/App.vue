@@ -199,9 +199,9 @@ header {
   padding: 1rem;
   font-size: 1rem;
   height: 100dvh;
-  max-height: 520px;
+  max-height: 620px;
   width: 100%;
-  max-width: 375px;
+  max-width: 420px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr auto auto auto;
@@ -211,6 +211,20 @@ header {
     'settings settings'
     'button button'
     'weather weather';
+
+  @media (min-width: 768px) {
+    max-width: 480px;
+    max-height: 700px;
+    padding: 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  @media (min-width: 1024px) {
+    max-width: 520px;
+    max-height: 780px;
+    padding: 2rem;
+    font-size: 1.15rem;
+  }
 }
 
 section {
@@ -320,28 +334,28 @@ section {
   width: 100%;
   height: auto;
   transform-origin: center top;
-  max-width: 60px;
+  max-width: clamp(50px, 15vw, 80px);
 
   &.tank-top {
-    max-width: 60px;
+    max-width: clamp(50px, 15vw, 80px);
   }
   &.trousers {
-    max-width: 70px;
+    max-width: clamp(60px, 17vw, 90px);
   }
   &.skirt {
-    max-width: 90px;
+    max-width: clamp(75px, 22vw, 110px);
   }
   &.tshirt {
-    max-width: 80px;
+    max-width: clamp(65px, 20vw, 100px);
   }
   &.dress {
-    max-width: 55px;
+    max-width: clamp(45px, 13vw, 70px);
   }
   &.shirt {
-    max-width: 90px;
+    max-width: clamp(75px, 22vw, 110px);
   }
   &.sweater {
-    max-width: 90px;
+    max-width: clamp(75px, 22vw, 110px);
   }
 }
 

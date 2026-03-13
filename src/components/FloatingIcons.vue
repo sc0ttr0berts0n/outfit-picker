@@ -1,53 +1,54 @@
 <template>
   <div class="floating-icons" aria-hidden="true">
-    <div
-      v-for="particle in particles"
-      :key="particle.id"
-      class="particle"
-      :style="particle.style"
-    >
-      <img :src="particle.src" alt="" />
-    </div>
-  </div>
-
-  <!-- Debug sliders -->
-  <div class="debug-panel">
-    <div class="debug-row">
-      <label>Size: {{ sizeMin }}–{{ sizeMax }}px</label>
-      <input type="range" v-model.number="sizeMin" min="10" max="300" step="5" />
-      <input type="range" v-model.number="sizeMax" min="10" max="300" step="5" />
-    </div>
-    <div class="debug-row">
-      <label>Opacity: {{ opacityMin.toFixed(2) }}–{{ opacityMax.toFixed(2) }}</label>
-      <input type="range" v-model.number="opacityMin" min="0.01" max="1" step="0.01" />
-      <input type="range" v-model.number="opacityMax" min="0.01" max="1" step="0.01" />
-    </div>
-    <div class="debug-row">
-      <label>Lifespan: {{ durationMin }}–{{ durationMax }}s</label>
-      <input type="range" v-model.number="durationMin" min="3" max="120" step="1" />
-      <input type="range" v-model.number="durationMax" min="3" max="120" step="1" />
-    </div>
-    <div class="debug-row">
-      <label>Count: {{ count }}</label>
-      <input type="range" v-model.number="count" min="5" max="150" step="1" />
-    </div>
-    <div class="debug-row">
-      <label>Rotation: ±{{ rotationMax }}°</label>
-      <input type="range" v-model.number="rotationMax" min="0" max="360" step="5" />
-    </div>
-    <button class="debug-apply" @click="regenerate">Apply</button>
-    <div class="debug-output">
-      <code>size: rand({{ sizeMin }}, {{ sizeMax }})<br/>
-      opacity: rand({{ opacityMin.toFixed(3) }}, {{ opacityMax.toFixed(3) }})<br/>
-      duration: rand({{ durationMin }}, {{ durationMax }})<br/>
-      count: {{ count }}<br/>
-      rotation: rand(-{{ rotationMax }}, {{ rotationMax }})</code>
+    <div class="grid-scroll">
+      <div class="grid-inner">
+        <!-- First copy -->
+        <div
+          v-for="(row, r) in rows"
+          :key="'a' + r"
+          class="brick-row"
+          :class="{ offset: r % 2 === 1 }"
+        >
+          <div
+            v-for="(cell, c) in row"
+            :key="c"
+            class="brick-cell"
+          >
+            <img
+              :src="cell.src"
+              alt=""
+              class="brick-icon"
+              :style="{ filter: cell.filter, opacity: cell.opacity }"
+            />
+          </div>
+        </div>
+        <!-- Duplicate for seamless loop -->
+        <div
+          v-for="(row, r) in rows"
+          :key="'b' + r"
+          class="brick-row"
+          :class="{ offset: r % 2 === 1 }"
+        >
+          <div
+            v-for="(cell, c) in row"
+            :key="c"
+            class="brick-cell"
+          >
+            <img
+              :src="cell.src"
+              alt=""
+              class="brick-icon"
+              :style="{ filter: cell.filter, opacity: cell.opacity }"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 
 const ICONS = [
   '/img/clothing/dress.svg',
@@ -59,72 +60,50 @@ const ICONS = [
   '/img/clothing/tshirt.svg',
 ]
 
+// Navy blue only
 const COLOR_FILTERS = [
-  'brightness(0) invert(1)',
-  'brightness(0) invert(82%) sepia(40%) saturate(600%) hue-rotate(110deg)',
-  'brightness(0) invert(8%) sepia(60%) saturate(3000%) hue-rotate(220deg)',
-  'brightness(0) invert(85%) sepia(30%) saturate(800%) hue-rotate(130deg)',
+  'brightness(0) invert(8%) sepia(60%) saturate(3000%) hue-rotate(220deg)',         // navy #0b103b
 ]
 
-// Debug controls
-const sizeMin = ref(60)
-const sizeMax = ref(140)
-const opacityMin = ref(0.144)
-const opacityMax = ref(0.42)
-const durationMin = ref(20)
-const durationMax = ref(45)
-const count = ref(54)
-const rotationMax = ref(180)
+const COLS = 30
+const TILE_ROWS = 30
 
-function rand(min, max) {
-  return min + Math.random() * (max - min)
-}
-
-function createParticle(id) {
-  const size = rand(sizeMin.value, sizeMax.value)
-  const opacity = rand(opacityMin.value, opacityMax.value)
-  const duration = rand(durationMin.value, durationMax.value)
-  const delay = rand(0, -duration)
-  const startX = rand(0, 100)
-  const startY = rand(0, 100)
-  const driftX = rand(-30, 30)
-  const driftY = rand(-40, -10)
-  const rotation = rand(-rotationMax.value, rotationMax.value)
-  const colorFilter = COLOR_FILTERS[Math.floor(Math.random() * COLOR_FILTERS.length)]
-
-  return {
-    id,
-    src: ICONS[Math.floor(Math.random() * ICONS.length)],
-    style: {
-      width: `${size}px`,
-      height: `${size}px`,
-      '--max-opacity': opacity,
-      left: `${startX}%`,
-      top: `${startY}%`,
-      '--drift-x': `${driftX}vw`,
-      '--drift-y': `${driftY}vh`,
-      '--rotation': `${rotation}deg`,
-      '--color-filter': colorFilter,
-      animationDuration: `${duration}s`,
-      animationDelay: `${delay}s`,
-    },
+// Seeded PRNG for deterministic but well-distributed randomness
+function mulberry32(seed) {
+  return function () {
+    seed |= 0
+    seed = (seed + 0x6d2b79f5) | 0
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
 }
 
-const particles = ref([])
-
-function regenerate() {
-  particles.value = Array.from({ length: count.value }, (_, i) =>
-    createParticle(i)
-  )
-}
-
-onMounted(() => {
-  regenerate()
+const rows = computed(() => {
+  const rng = mulberry32(42)
+  const grid = []
+  for (let r = 0; r < TILE_ROWS; r++) {
+    const row = []
+    for (let c = 0; c < COLS; c++) {
+      row.push({
+        src: ICONS[Math.floor(rng() * ICONS.length)],
+        filter: COLOR_FILTERS[Math.floor(rng() * COLOR_FILTERS.length)],
+        opacity: 0.12,
+      })
+    }
+    grid.push(row)
+  }
+  return grid
 })
 </script>
 
 <style lang="scss" scoped>
+$cell-size: 55px;
+$gap: 20px;
+$row-step: $cell-size + $gap;
+// The tile is TILE_ROWS rows; we scroll exactly that distance then reset
+$tile-height: $row-step * 30;
+
 .floating-icons {
   position: fixed;
   inset: 0;
@@ -133,96 +112,54 @@ onMounted(() => {
   overflow: hidden;
 }
 
-.particle {
+.grid-scroll {
   position: absolute;
-  animation: drift linear infinite;
-  will-change: transform;
+  top: 50%;
+  left: 50%;
+  width: 250vmax;
+  height: 250vmax;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: var(--color-filter, brightness(0) invert(1));
+.grid-inner {
+  display: flex;
+  flex-direction: column;
+  animation: scroll-grid 180s linear infinite;
+}
+
+.brick-row {
+  display: flex;
+  flex-shrink: 0;
+  height: $row-step;
+
+  &.offset {
+    margin-left: calc($cell-size / 2 + $gap / 2);
   }
 }
 
-@keyframes drift {
+.brick-cell {
+  width: $cell-size;
+  height: $cell-size;
+  flex-shrink: 0;
+  margin-right: $gap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brick-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+// Scroll by exactly one tile's worth of rows, then the duplicate takes over seamlessly
+@keyframes scroll-grid {
   0% {
-    transform: translate(0, 0) rotate(0deg);
-    opacity: 0;
-  }
-  5% {
-    opacity: var(--max-opacity);
-  }
-  95% {
-    opacity: var(--max-opacity);
+    transform: translateY(0);
   }
   100% {
-    transform: translate(var(--drift-x), var(--drift-y)) rotate(var(--rotation));
-    opacity: 0;
+    transform: translateY(-#{$tile-height});
   }
-}
-
-.debug-panel {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  z-index: 9999;
-  background: rgba(11, 16, 59, 0.92);
-  color: white;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-family: 'Montserrat', monospace;
-  font-size: 0.6rem;
-  width: 280px;
-  pointer-events: auto;
-  backdrop-filter: blur(8px);
-}
-
-.debug-row {
-  margin-bottom: 0.4rem;
-
-  label {
-    display: block;
-    margin-bottom: 0.15rem;
-    color: rgba(255, 255, 255, 0.6);
-    letter-spacing: 0.5px;
-  }
-
-  input[type="range"] {
-    width: 48%;
-    height: 4px;
-    accent-color: #0dd793;
-  }
-}
-
-.debug-apply {
-  width: 100%;
-  padding: 0.4rem;
-  margin-top: 0.3rem;
-  background: #0dd793;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  font-size: 0.65rem;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-
-  &:hover {
-    background: #0bc480;
-  }
-}
-
-.debug-output {
-  margin-top: 0.5rem;
-  padding: 0.4rem;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-  font-family: monospace;
-  font-size: 0.55rem;
-  color: #0dd793;
-  line-height: 1.5;
 }
 </style>
