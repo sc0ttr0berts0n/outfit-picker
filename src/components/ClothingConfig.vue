@@ -141,12 +141,14 @@ $secondary-color: #0dd793;
   justify-content: center;
   align-items: flex-start;
   padding: 1rem;
+  padding-top: calc(1rem + env(safe-area-inset-top));
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
 }
 
 .config-panel {
   width: 100%;
   max-width: 375px;
-  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   font-family: 'Montserrat', sans-serif;

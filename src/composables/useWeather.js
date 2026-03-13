@@ -86,7 +86,9 @@ export function useWeather() {
     if (cached) {
       await loadWeather(cached.lat, cached.lon)
     } else {
-      await refreshLocation()
+      // Don't prompt for location on load — wait for user to tap the pin
+      loading.value = false
+      error.value = 'Tap 📍 to enable weather'
     }
   }
 

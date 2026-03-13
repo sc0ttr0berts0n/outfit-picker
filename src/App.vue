@@ -99,13 +99,11 @@ $secondary-color: #0dd793;
 }
 
 html {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;
+  overscroll-behavior: none;
+  background-color: #51f5e3;
 }
 
 body {
@@ -115,15 +113,30 @@ body {
   font-family: 'Montserrat', sans-serif;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  padding:
+    env(safe-area-inset-top)
+    env(safe-area-inset-right)
+    env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+// Prevent text selection on interactive elements
+button,
+.season,
+.chip,
+.weather-day,
+.item-header,
+.item-toggle {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 h1 {
@@ -175,7 +188,7 @@ header {
 .container {
   padding: 1rem;
   font-size: 1rem;
-  height: 100%;
+  height: 100dvh;
   max-height: 520px;
   width: 100%;
   max-width: 375px;
